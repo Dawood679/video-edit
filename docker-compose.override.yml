@@ -1,31 +1,22 @@
 # ── Development overrides ──────────────────────────────────────────────────
-# This file is automatically loaded by `docker compose up` alongside
-# docker-compose.yml. Do NOT use in production on EC2.
-#
-# To run in production mode locally (without this file):
-#   docker compose -f docker-compose.yml up
+# Auto-loaded by `docker compose up` (local dev only).
+# EC2 / Production: docker compose -f docker-compose.yml up -d
 
 version: "3.9"
 
 services:
   app:
-    build:
-      context: ./onixframe
-      dockerfile: Dockerfile
-    command: sh -c "npx prisma migrate dev && npm run dev"
+    command: sh -c "npx prisma migrate deploy && npm run dev"
     environment:
       NODE_ENV: development
     volumes:
       - ./onixframe/src:/app/src
       - ./onixframe/prisma:/app/prisma
       - ./onixframe/public:/app/public
-      # Prevent overwriting node_modules from host
       - /app/node_modules
       - /app/.next
-    ports:
-      - "3000:3000"
 
-  # Expose Whisper and Ollama ports for local debugging
+  # Expose internal ports for debugging locally
   whisper:
     ports:
       - "8000:8000"
@@ -34,5 +25,7 @@ services:
     ports:
       - "11434:11434"
 
-  # In dev, don't need postgres if you're using NeonDB locally
-  # Comment out the app depends_on postgres above if so
+volumes:
+  minio_data:
+  whisper_models:
+  ollama_data:

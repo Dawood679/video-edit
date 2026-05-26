@@ -5,6 +5,7 @@
 FROM python:3.11-slim
 
 # System dependencies
+# python3.11-slim is missing pkg_resources (setuptools) — install it first
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       ffmpeg \
@@ -15,7 +16,11 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install Python deps first (cached layer unless requirements.txt changes)
+# Fix: upgrade pip + install setuptools/wheel BEFORE requirements
+# python:3.11-slim strips pkg_resources which many packages need at build time
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install Python deps (cached layer unless requirements.txt changes)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
