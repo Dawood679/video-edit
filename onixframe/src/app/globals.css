@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ── Tailwind v4 theme extension ─────────────────────────────── */
+@theme {
+  /* Brand palette (Indigo → Purple) */
+  --color-brand-50:  #f0f4ff;
+  --color-brand-100: #e0e9ff;
+  --color-brand-200: #c7d7fe;
+  --color-brand-300: #a5b8fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+
+  /* Soft neumorphic shadows */
+  --shadow-soft-sm: 4px 4px 10px rgba(0,0,0,0.06), -2px -2px 6px rgba(255,255,255,0.8);
+  --shadow-soft:    8px 8px 20px rgba(0,0,0,0.08), -4px -4px 12px rgba(255,255,255,0.9);
+  --shadow-soft-lg: 12px 12px 30px rgba(0,0,0,0.10), -6px -6px 18px rgba(255,255,255,0.95);
+  --shadow-soft-dark: 8px 8px 20px rgba(0,0,0,0.4), -4px -4px 12px rgba(255,255,255,0.03);
+  --shadow-glow:    0 0 40px rgba(99,102,241,0.35);
+
+  /* Animations */
+  --animate-float:        float 6s ease-in-out infinite;
+  --animate-pulse-slow:   pulse 4s cubic-bezier(0.4,0,0.6,1) infinite;
+  --animate-gradient:     gradient 8s ease infinite;
+  --animate-shimmer:      shimmer 1.5s linear infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-12px); }
+  }
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50%       { background-position: 100% 50%; }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+}
+
+/* ── CSS custom properties for theme-aware colors ────────────── */
+:root {
+  --bg-primary:    #f8fafc;
+  --bg-secondary:  #f1f5f9;
+  --bg-card:       #ffffff;
+  --text-primary:  #0f172a;
+  --text-secondary:#475569;
+  --border-color:  #e2e8f0;
+  --accent:        #6366f1;
+}
+
+.dark {
+  --bg-primary:    #0f172a;
+  --bg-secondary:  #1e293b;
+  --bg-card:       #1e293b;
+  --text-primary:  #f8fafc;
+  --text-secondary:#94a3b8;
+  --border-color:  #334155;
+  --accent:        #818cf8;
+}
+
+/* ── Base styles ─────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* ── Reusable component classes ──────────────────────────────── */
+@layer components {
+  /* Soft neumorphic card */
+  .soft-card {
+    background-color: var(--bg-card);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s;
+  }
+
+  .dark .soft-card {
+    box-shadow: var(--shadow-soft-dark);
+  }
+
+  /* Primary filled button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background-color: #6366f1;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover {
+    background-color: #4f46e5;
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Soft ghost button */
+  .btn-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background-color: #f0f4ff;
+    color: #4f46e5;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .dark .btn-soft {
+    background-color: #1e293b;
+    color: #818cf8;
+  }
+  .btn-soft:hover {
+    background-color: #e0e9ff;
+  }
+  .dark .btn-soft:hover {
+    background-color: #334155;
+  }
+  .btn-soft:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Skeleton loader */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--bg-secondary) 25%,
+      var(--border-color) 50%,
+      var(--bg-secondary) 75%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 0.5rem;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb { background: #475569; }

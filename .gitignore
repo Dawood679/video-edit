@@ -1,0 +1,40 @@
+# ── Environment files (NEVER commit these) ──────────────────────────────────
+.env
+.env.local
+.env.*.local
+onixframe/.env
+onixframe/.env.local
+onixframe/.env.*.local
+
+# ── Next.js ──────────────────────────────────────────────────────────────────
+onixframe/.next/
+onixframe/out/
+onixframe/node_modules/
+onixframe/.vercel/
+
+# ── Prisma ───────────────────────────────────────────────────────────────────
+onixframe/prisma/migrations/     # auto-generated — keep only in version control if you want migration history
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+# Docker volumes are stored separately — not needed in git
+
+# ── OS / Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/settings.json
+
+# ── Python ───────────────────────────────────────────────────────────────────
+whisper-service/__pycache__/
+whisper-service/*.pyc
+whisper-service/.venv/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Temp files ───────────────────────────────────────────────────────────────
+*.tmp
+*.temp

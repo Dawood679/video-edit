@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Video {
+  id           String      @id @default(cuid())
+  filename     String
+  originalName String
+  size         Int
+  duration     Float?
+  mimeType     String
+  storageKey   String      @unique
+  status       VideoStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  transcription  Transcription?
+  metadata       VideoMetadata?
+  processingJobs ProcessingJob[]
+}
+
+model Transcription {
+  id         String   @id @default(cuid())
+  videoId    String   @unique
+  text       String   @db.Text
+  language   String?
+  confidence Float?
+  duration   Float?
+  segments   Json?
+  createdAt  DateTime @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model VideoMetadata {
+  id          String   @id @default(cuid())
+  videoId     String   @unique
+  title       String
+  description String   @db.Text
+  tags        String[]
+  seoScore    Int?     @default(0)
+  createdAt   DateTime @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model ProcessingJob {
+  id          String    @id @default(cuid())
+  videoId     String
+  type        JobType
+  status      JobStatus @default(QUEUED)
+  progress    Int       @default(0)
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+enum VideoStatus {
+  PENDING
+  PROCESSING
+  TRANSCRIBED
+  METADATA_GENERATED
+  ENHANCED
+  COMPLETE
+  FAILED
+}
+
+enum JobType {
+  TRANSCRIPTION
+  METADATA_GENERATION
+  ENHANCEMENT
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
