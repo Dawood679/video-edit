@@ -1,29 +1,27 @@
 # ── Whisper FastAPI Service ───────────────────────────────────────────────────
-FROM python:3.11-slim
+# Use full python:3.11 (NOT slim) — slim strips setuptools/pkg_resources which
+# openai-whisper's setup.py needs. The full image ships setuptools pre-baked.
+FROM python:3.11
 
-# System deps + python3-setuptools (provides pkg_resources at OS level)
-# This is critical: openai-whisper uses setup.py which needs pkg_resources
-# even inside pip's isolated build environment
+# System deps: ffmpeg (audio decode), git (whisper fetches tiktoken via git),
+#              curl (healthcheck probe)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       ffmpeg \
       git \
       curl \
-      python3-setuptools \
-      python3-wheel \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Upgrade pip + ensure setuptools/wheel available via pip too
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+# Upgrade pip only — setuptools/wheel already correct in full python:3.11 image
+RUN pip install --no-cache-dir --upgrade pip
 
-# Copy and install requirements
-# --no-build-isolation: use system setuptools instead of pip's isolated env
-# This prevents "No module named pkg_resources" for packages using setup.py
+# Install requirements
+# No --no-build-isolation needed; full image has pkg_resources available
 COPY requirements.txt .
-RUN pip install --no-cache-dir --no-build-isolation -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
